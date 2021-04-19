@@ -7,34 +7,21 @@ from selenium.webdriver.common.by import By
 import csv
 import sys
 import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from email.message import EmailMessage
 gmail_user = 'aidendawes.spammail@gmail.com'
 gmail_password = '9meidoring'
-server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+
 
 def send_mail(result, url, email):
-    mail_from = gmail_user
-    mail_to = email
-    mail_subject = "Update on Tracked website"
-    mail_message_body = 'There was a change on ' + url + '\n the new text = ' + result
-    mail_message = '''\
-    From:%s
-    To:%s
-    Subject:%s
-    %s
-    ''' % (mail_from, mail_to, mail_subject, mail_message_body)
-    header='To:'+mail_to+'\n'+'From:'+mail_from+'\n'+'subject:'+mail_subject+'\n'
-    message = MIMEMultipart('alternative')
+    message = EmailMessage()
     message['Subject'] = "Update on Tracked website"
     message['From'] = gmail_user
     message['To'] = email
-    message.attach(MIMEText('# A Heading\nSomething else in the body', 'plain')
-    content=header+mail_message_body
+    message.set_content('There was a change on ' + url + '\n the new text = ' + result)
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     server.login(gmail_user, gmail_password)
-    server.sendmail(mail_from, mail_to, content)
+    server.send_message(message)
     server.close()
-
 
 def check_changes(row):
     link = row[0]
@@ -42,8 +29,6 @@ def check_changes(row):
     options.add_argument('headless')
     browser = webdriver.Chrome(options=options)
     browser.get(link)
-    #wait = WebDriverWait(browser, 10)
-    #wait.until(EC.visibility_of_element_located((By.ID, "payment-buttons payment-buttons--small")))
     html = browser.page_source
     soup = BeautifulSoup(html, 'html.parser')
     _type = row[1]
