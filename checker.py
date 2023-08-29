@@ -8,8 +8,8 @@ import csv
 import sys
 import smtplib
 from email.message import EmailMessage
-gmail_user = 'aidendawes.spammail@gmail.com'
-gmail_password = '9meidoring'
+gmail_user = 'NAME@EMAIL.COM'
+gmail_password = 'PASSWORD'
 
 
 def send_mail(result, url, email):
